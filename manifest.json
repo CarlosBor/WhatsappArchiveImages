@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "WAA",
+  "version": "1.0",
+
+  "description": "Archives avatar images from web.whatsapp",
+
+  "icons": {
+    "48": "icons/albumIcon.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["WAA.js"]
+    }
+  ],
+  "background": {
+    "scripts": ["backgroundScript.js"]
+  },
+  "permissions": [
+    "https://web.whatsapp.com/*",
+    "storage",
+    "downloads",
+    "notifications"
+  ]
+}
+
