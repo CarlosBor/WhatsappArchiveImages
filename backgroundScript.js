@@ -9,22 +9,24 @@
       downloading.then(onStartedDownload, onFailed);
  } */
 
-function notify(message){
-  
+function notify(message){  
+  console.log("Llega");
+  console.log(message);
     for (i=0;i<message.length;i++){
+      console.log("Llega2");
       if(message[i].imageURL==""){
         continue;
       }
       console.log(message[i].imageURL+"");
       console.log(message[i].chatName);
         var downloadUrl = message[i].imageURL;
+        var now = new Date();
         var downloading = browser.downloads.download({
             url : downloadUrl+"",
-            filename : "WSImages/" + message[i].chatName+".jpg",
+            filename : "WSImages/" + message[i].chatName+"/"+now.getDate() + "-" + now.getMonth()+1+"-"+now.getUTCFullYear()+".jpg",
             conflictAction : 'uniquify'
           });          
     }
-
       downloading.then(onStartedDownload, onFailed);
 }
 

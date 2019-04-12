@@ -13,30 +13,40 @@ function getChatNodes(){
 }
 
 
+
 function populateDownloadObjects(nodes){
+    if (localStorage.getItem("downloadedURLs") == null){
+        localStorage.setItem("downloadedURLs",JSON.stringify([]));
+    }
 
     infoForDownload = [];
     for (i=0;i<nodes.length;i++){
-        infoForDownload.push({});
         //Image source query
-        
-        baseImageSource = nodes[i].querySelector("img").src;
-        console.log(baseImageSource);
+        baseImageSource = nodes[i].querySelector("img").src;        
         if(baseImageSource.charAt(0)=="d"){
-            baseImageSource = "https://web.whatsapp.com/pp?e=https%3A%2F%2Fpps.whatsapp.net%2Fv%2Ft61.11540-24%2F55424372_779205565788090_6920167975806828544_n.jpg%3Foe%3D5CB34F85%26oh%3Daea3bdd893b435c478562a626b315d7a&t=s&u=34685786192-1369241819%40g.us&i=1553270922"
+            continue;
         }
+
         baseImageSource = decodeURIComponent(baseImageSource);
         regexRule = new RegExp("https:\/\/pps.*");
         parsedImageSource = baseImageSource.match(regexRule)[0];
-        infoForDownload[i].imageURL = parsedImageSource;
-        
+
+
+        if(JSON.parse(localStorage.getItem("downloadedURLs").indexOf(parsedImageSource)!=-1)){
+            continue;
+        }        
+        tempArray = JSON.parse(localStorage.getItem("downloadedURLs"));
+        tempArray.push(parsedImageSource);
+        localStorage.setItem("downloadedURLs",JSON.stringify(tempArray));
+        infoForDownload.push({});
+        infoForDownload[infoForDownload.length-1].imageURL = parsedImageSource;
         //Chat name query, different for groups and single contacts
-        infoForDownload[i].chatName = nodes[i].querySelector("span[title]").title;
-        if (infoForDownload[i].chatName == ""){
-            infoForDownload[i].chatName = nodes[i].querySelector("span>span[title]").title;
+        infoForDownload[infoForDownload.length-1].chatName = nodes[i].querySelector("span[title]").title;
+        
+        if (infoForDownload[infoForDownload.length-1].chatName == ""){
+            infoForDownload[infoForDownload.length-1].chatName = nodes[i].querySelector("span>span[title]").title;
         }
     }
-    console.log(infoForDownload[0].imageURL);
     return infoForDownload;
 }
 
@@ -52,8 +62,10 @@ function timetracker(){
             localStorage.setItem("elapsedTime", time);
             nodes = getChatNodes();
             finalObject = populateDownloadObjects(nodes);
-            browser.runtime.sendMessage(populateDownloadObjects(getChatNodes()));
-            
+            console.log(finalObject);
+            if(finalObject.length!=0){
+                browser.runtime.sendMessage(finalObject);
+            }
         }
     }
 }
