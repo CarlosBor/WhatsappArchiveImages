@@ -57,7 +57,7 @@ function timetracker(){
         time = + new Date(); //+ triggers valueOf and gives UNIX time
         localStorage.setItem("elapsedTime", time);
     }else{
-        if (localStorage.getItem("elapsedTime") - new Date() < - 800){ //If more than a day has elapsed
+        if (localStorage.getItem("elapsedTime") - new Date() < - 86400000){ //If more than a day has elapsed
             time = + new Date(); //+ triggers valueOf and gives UNIX time
             localStorage.setItem("elapsedTime", time);
             nodes = getChatNodes();
