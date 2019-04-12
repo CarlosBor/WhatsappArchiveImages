@@ -21,9 +21,13 @@ function notify(message){
       console.log(message[i].chatName);
         var downloadUrl = message[i].imageURL;
         var now = new Date();
+        var dayOfMonth = now.getDate();
+        console.log(now.getMonth());
+        var monthOfYear = parseInt(now.getMonth())+1;
+        var currentYear = now.getUTCFullYear();
         var downloading = browser.downloads.download({
             url : downloadUrl+"",
-            filename : "WSImages/" + message[i].chatName+"/"+now.getDate() + "-" + now.getMonth()+1+"-"+now.getUTCFullYear()+".jpg",
+            filename : "WSImages/" + message[i].chatName+"/"+ dayOfMonth + "-" + monthOfYear + "-"+ currentYear+".jpg",
             conflictAction : 'uniquify'
           });          
     }
