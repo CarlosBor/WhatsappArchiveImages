@@ -22,83 +22,49 @@ function readBlob(input) {
 
 //Get the MD5 from an image link
 function imgToMD5(source){
-    //Promise to create Image object, to ensure it has finished before using it.
-    let loadImage = new Promise((resolve,reject) =>{
-        var img = new Image();
-        var canvas = document.createElement("canvas");
-        var resolveData = []
-        resolveData[0] = img;
-        resolveData[1] = canvas;
-        resolve(resolveData);
-        reject("Error creating image object or canvas.");
-    });
-    loadImage.then((resolveData) => {
-        var img = resolveData[0];
-        var canvas = resolveData[1];
-        img.crossOrigin = "anonymous";
-        img.src = source;
-        canvas.height = img.naturalHeight;
-        canvas.width = img.naturalWidth;
-        var ctx = canvas.getContext("2d");
-        //Promise to draw the image into the canvas, to ensure that it's drawn before triggering toDataURL()
-        let loadCanvas = new Promise((resolve,reject)=>{
-            ctx.drawImage(img,0,0);
-            resolve(canvas);
-            reject("Error while drawing canvas.");
-        });
-        loadCanvas.then((canvas) =>{
-            console.log("Inside second promise response");
-            //Promise to ensure that the function returns the value instead of undefined
-            let codifyCanvas = new Promise((resolve,reject)=>{
-                var canvasDataURL = canvas.toDataURL('image/jpeg', 0.2);
-                var code = md5(canvasDataURL);
-                resolve(code);
-            });
-            codifyCanvas.then((code)=>{
-                console.log("Finishing");
-                console.log("This is the md5: " + code);
-                return code;
-            })
-        });
-    });
-}
+    var img = new Image();
+    var canvas = document.createElement("canvas");
+    img.crossOrigin = "anonymous";
+    img.src = source;
+    canvas.height = img.naturalHeight;
+    canvas.width = img.naturalWidth;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img,0,0);
+    var canvasDataURL = canvas.toDataURL('image/jpeg', 0.2);
+    var code = md5(canvasDataURL);
+    return code;
+};
 
 function populateDownloadObjects(nodes){
-    
     if (localStorage.getItem("imgMD5") == null){
         localStorage.setItem("imgMD5",JSON.stringify([]));
     }
     infoForDownload = [];
     for (i=0;i<nodes.length;i++){
         //Image source query
-        baseImageSource = nodes[i].querySelector("img").src;        
+        baseImageSource = nodes[i].querySelector("img").src;
+        if (baseImageSource == null){
+            setTimeout(function(){
+                baseImageSource = nodes[i].querySelector("img").src;
+            }, 500);
+        }
         if(baseImageSource.charAt(0)=="d"){
             continue;
         }
         baseImageSource = decodeURIComponent(baseImageSource);
         regexRule = new RegExp("https:\/\/pps.*");
         parsedImageSource = baseImageSource.match(regexRule)[0];
-        console.log(parsedImageSource);
-        
-        MD5Value = imgToMD5(parsedImageSource);
-
-         (async function() {
-            MD5Value = await imgToMD5(parsedImageSource);
-            console.log(MD5Value);
-        })()
-          
-        console.log("The code is: " + MD5Value);
-        if(JSON.parse(localStorage.getItem("imgMD5").indexOf(imgToMD5(parsedImageSource))!=-1)){
+        var MD5Value = imgToMD5(parsedImageSource);
+        if(JSON.parse(localStorage.getItem("imgMD5").indexOf(MD5Value)!=-1)){
             continue;
         }        
         tempArray = JSON.parse(localStorage.getItem("imgMD5"));
-        tempArray.push(imgToMD5(parsedImageSource));
+        tempArray.push(MD5Value);
         localStorage.setItem("imgMD5",JSON.stringify(tempArray));
         infoForDownload.push({});
         infoForDownload[infoForDownload.length-1].imageURL = parsedImageSource;
         //Chat name query, different for groups and single contacts
         infoForDownload[infoForDownload.length-1].chatName = nodes[i].querySelector("span[title]").title;
-        
         if (infoForDownload[infoForDownload.length-1].chatName == ""){
             infoForDownload[infoForDownload.length-1].chatName = nodes[i].querySelector("span>span[title]").title;
         }
