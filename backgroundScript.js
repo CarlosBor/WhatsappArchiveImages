@@ -9,7 +9,7 @@
       downloading.then(onStartedDownload, onFailed);
  } */
 
-function notify(message){  
+function notify(message){
   console.log(message);
     for (i=0;i<message.length;i++){
       if(message[i].imageURL==""){
