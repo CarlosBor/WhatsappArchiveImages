@@ -11,10 +11,13 @@
 
   "content_scripts": [
     {
-      "matches": ["https://web.whatsapp.com/*"],
+      "matches": ["https://web.whatsapp.com/*", "https://pps.whatsapp.net/*"],
       "js": ["WAA.js"]
     }
   ],
+  "web_accessible_resources": [
+    "md5.min.js"
+ ],
   "background": {
     "scripts": ["backgroundScript.js"]
   },
@@ -22,7 +25,9 @@
     "https://web.whatsapp.com/*",
     "storage",
     "downloads",
-    "notifications"
+    "notifications",
+    "*://localhost/*",
+    "https://pps.whatsapp.net/*"
   ]
 }
 

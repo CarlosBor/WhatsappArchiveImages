@@ -10,10 +10,8 @@
  } */
 
 function notify(message){  
-  console.log("Llega");
   console.log(message);
     for (i=0;i<message.length;i++){
-      console.log("Llega2");
       if(message[i].imageURL==""){
         continue;
       }
