@@ -2,7 +2,6 @@
 //JavaScript MD5
 //https://github.com/blueimp/JavaScript-MD5
 console.log("Script loaded.");
-localStorage.removeItem("imgMD5");
 //Contact Nodes query
 function getChatNodes(){
     return document.querySelectorAll("div#pane-side>div>div>div>div");
@@ -44,18 +43,15 @@ function populateDownloadObjects(nodes){
 
     infoForDownload = [];
     for (i=0;i<nodes.length;i++){
-        console.log("Uno: " + i);
         //Image source query
         baseImageSource = nodes[i].querySelector("img").src;
         if(baseImageSource.charAt(0)=="d"){
             continue;
         }
-        console.log("Dos: " + i);
         baseImageSource = decodeURIComponent(baseImageSource);
         regexRule = new RegExp("https:\/\/pps.*");
         parsedImageSource = baseImageSource.match(regexRule)[0];
         var MD5Value = imgToMD5(parsedImageSource);
-        console.log("Tres: " + i);
         if(JSON.parse(localStorage.getItem("imgMD5").indexOf(MD5Value)!=-1)){
             continue;
         }
@@ -64,16 +60,15 @@ function populateDownloadObjects(nodes){
         localStorage.setItem("imgMD5",JSON.stringify(tempArray));
         infoForDownload.push({});
         infoForDownload[infoForDownload.length-1].imageURL = parsedImageSource;
-        console.log("Cuatro: " + i);
         //Chat name query, different for groups and single contacts
         infoForDownload[infoForDownload.length-1].chatName = nodes[i].querySelector("span[title]").title;
-        console.log("Cinco: " + i);
         if (infoForDownload[infoForDownload.length-1].chatName == ""){
             infoForDownload[infoForDownload.length-1].chatName = nodes[i].querySelector("span>span[title]").title;
         }
-        console.log("Seis: " + i);
     }
     console.log("Keepo");
+    console.table(infoForDownload);
+    console.log(infoForDownload);
     return infoForDownload;
 }
 
@@ -84,7 +79,7 @@ function timetracker(){
         time = + new Date(); //+ triggers valueOf and gives UNIX time
         localStorage.setItem("elapsedTime", time);
     }else{
-        if (localStorage.getItem("elapsedTime") - new Date() < - 864){ //If more than a day has elapsed
+        if (localStorage.getItem("elapsedTime") - new Date() < - 86400){ //If more than a day has elapsed
             time = + new Date(); //+ triggers valueOf and gives UNIX time
             localStorage.setItem("elapsedTime", time);
             nodes = getChatNodes();
