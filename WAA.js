@@ -31,7 +31,6 @@ function populateDownloadObjects(nodes){
     infoForDownload = [];
     for (i=0;i<nodes.length;i++){
         //Image source query
-        console.log(i);
         if(nodes[i].querySelector("svg")!=null){
             continue;
         }
@@ -74,7 +73,6 @@ try{
             localStorage.setItem("elapsedTime", time);
             nodes = getChatNodes();
             finalObject = populateDownloadObjects(nodes);
-            console.log(finalObject);
             if(finalObject.length!=0){
                 browser.runtime.sendMessage(finalObject);
             }
