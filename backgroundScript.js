@@ -10,17 +10,13 @@
  } */
 
 function notify(message){
-  console.log(message);
     for (i=0;i<message.length;i++){
       if(message[i].imageURL==""){
         continue;
       }
-      console.log(message[i].imageURL+"");
-      console.log(message[i].chatName);
         var downloadUrl = message[i].imageURL;
         var now = new Date();
         var dayOfMonth = now.getDate();
-        console.log(now.getMonth());
         var monthOfYear = parseInt(now.getMonth())+1;
         var currentYear = now.getUTCFullYear();
         var downloading = browser.downloads.download({
