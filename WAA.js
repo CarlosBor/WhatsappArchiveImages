@@ -4,11 +4,16 @@
 
 //Contact Nodes query
 function getChatNodes(){
+try{
     return document.querySelectorAll("div#pane-side>div>div>div>div");
+    } catch(e){
+        console.log(e);
+    }
 }
 
 //Get the MD5 from an image link
 function imgToMD5(source){
+    try{
     var img = new Image();
     var canvas = document.createElement("canvas");
     img.crossOrigin = "anonymous";
@@ -20,27 +25,31 @@ function imgToMD5(source){
     var canvasDataURL = canvas.toDataURL('image/jpeg', 0.2);
     var code = md5(canvasDataURL);
     return code;
+    } catch(e){
+        console.log(e);
+    }
 };
 
 function populateDownloadObjects(nodes){
-    
+    try{
     if (localStorage.getItem("imgMD5") == null){
         localStorage.setItem("imgMD5",JSON.stringify([]));
     }
 
     infoForDownload = [];
     for (i=0;i<nodes.length;i++){
-        //Image source query
         if(nodes[i].querySelector("svg")!=null){
-            continue;
+            //Now every image uses a svg, might have to fix this in the future
+           // continue;
         }
         baseImageSource = nodes[i].querySelector("img").src;
         if(baseImageSource.charAt(0)=="d"){
             continue;
         }
         baseImageSource = decodeURIComponent(baseImageSource);
-        regexRule = new RegExp("https:\/\/pps.*");
-        parsedImageSource = baseImageSource.match(regexRule)[0];
+        //Regex filter to change thumbnail link for normal image link
+        regexRule = /@([a-z])/g;
+        parsedImageSource = baseImageSource.replace(regexRule, "%40"+"$1");
         var MD5Value = imgToMD5(parsedImageSource);
         if(JSON.parse(localStorage.getItem("imgMD5").indexOf(MD5Value)!=-1)){
             continue;
@@ -57,6 +66,9 @@ function populateDownloadObjects(nodes){
         }
     }
     return infoForDownload;
+    } catch(e){
+        console.log(e);
+    }
 }
 
 window.addEventListener("focus", timetracker);
@@ -67,12 +79,12 @@ try{
         time = + new Date(); //+ triggers valueOf and gives UNIX time
         localStorage.setItem("elapsedTime", time);
     }else{
-
-        if (localStorage.getItem("elapsedTime") - new Date() < - 864000){ //If more than a day has elapsed
+        if (localStorage.getItem("elapsedTime") - new Date() < - 2000){ //If more than a day has elapsed 864000
             time = + new Date(); //+ triggers valueOf and gives UNIX time
             localStorage.setItem("elapsedTime", time);
             nodes = getChatNodes();
             finalObject = populateDownloadObjects(nodes);
+            
             if(finalObject.length!=0){
                 browser.runtime.sendMessage(finalObject);
             }
