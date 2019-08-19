@@ -79,12 +79,11 @@ try{
         time = + new Date(); //+ triggers valueOf and gives UNIX time
         localStorage.setItem("elapsedTime", time);
     }else{
-        if (localStorage.getItem("elapsedTime") - new Date() < - 2000){ //If more than a day has elapsed 864000
+        if (localStorage.getItem("elapsedTime") - new Date() < - 200){ //If more than a day has elapsed 864000
             time = + new Date(); //+ triggers valueOf and gives UNIX time
             localStorage.setItem("elapsedTime", time);
             nodes = getChatNodes();
             finalObject = populateDownloadObjects(nodes);
-            
             if(finalObject.length!=0){
                 browser.runtime.sendMessage(finalObject);
             }
